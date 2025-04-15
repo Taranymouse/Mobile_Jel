@@ -6,13 +6,23 @@ from typing import List
 # ฟังก์ชันสำหรับดึงข้อมูลสินค้า
 def get_all_products() -> List[ProductModel]:
     products = query_get("SELECT * FROM products", ())
-    return products
+    # แมป product_id ไปยัง id
+    return [ProductModel(id=product["product_id"], 
+                         name=product["name"], 
+                         description=product["description"], 
+                         price=product["price"], 
+                         stock=product["stock"]) for product in products]
 
 def get_product_by_id(product_id: int) -> ProductModel:
     product = query_get("SELECT * FROM products WHERE product_id = %s", (product_id,))
     if not product:
         raise Exception("Product not found")
-    return product[0]
+    # แมป product_id ไปยัง id
+    return ProductModel(id=product[0]["product_id"], 
+                        name=product[0]["name"], 
+                        description=product[0]["description"], 
+                        price=product[0]["price"], 
+                        stock=product[0]["stock"])
 
 def create_product(product: ProductModel) -> int:
     sql = "INSERT INTO products (name, description, price, stock, image_url) VALUES (%s, %s, %s, %s, %s)"
