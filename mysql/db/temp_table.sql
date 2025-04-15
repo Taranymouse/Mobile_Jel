@@ -13,7 +13,8 @@ CREATE TABLE products (
     name VARCHAR(200),
     description TEXT,
     price DECIMAL(10,2),
-    stock INT
+    stock INT,
+    image_url TEXT -- เพิ่มคอลัมน์สำหรับเก็บ URL ของรูปภาพ
 );
 
 -- ตารางคำสั่งซื้อสินค้า
@@ -41,7 +42,7 @@ INSERT INTO users (name, email, phone, password)
 VALUES ('Somchai', 'somchai@example.com', '0812345678', 'hashedpassword123');
 
 -- สินค้าตัวอย่าง
-INSERT INTO products (name, description, price, stock)
+INSERT INTO products (name, description, price, stock, image_url)
 VALUES 
-('T-Shirt', 'Cotton T-Shirt', 300.00, 50),
-('Jeans', 'Blue Denim Jeans', 1200.00, 30);
+('T-Shirt', 'Cotton T-Shirt', 300.00, 50, 'https://example.com/images/tshirt.jpg'),
+('Jeans', 'Blue Denim Jeans', 1200.00, 30, 'https://example.com/images/jeans.jpg');

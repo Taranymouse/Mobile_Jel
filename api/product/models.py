@@ -7,6 +7,7 @@ class ProductModel(BaseModel):
     description: Optional[str] = None
     price: float
     stock: int
+    image_url: Optional[str] = None  # เพิ่มฟิลด์ image_url
 
 class OrderItemModel(BaseModel):
     product_id: int

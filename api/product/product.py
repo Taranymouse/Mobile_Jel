@@ -15,13 +15,13 @@ def get_product_by_id(product_id: int) -> ProductModel:
     return product[0]
 
 def create_product(product: ProductModel) -> int:
-    sql = "INSERT INTO products (name, description, price, stock) VALUES (%s, %s, %s, %s)"
-    params = (product.name, product.description, product.price, product.stock)
+    sql = "INSERT INTO products (name, description, price, stock, image_url) VALUES (%s, %s, %s, %s, %s)"
+    params = (product.name, product.description, product.price, product.stock, product.image_url)
     return query_create(sql, params)
 
 def update_product(product_id: int, product: ProductModel) -> bool:
-    sql = "UPDATE products SET name = %s, description = %s, price = %s, stock = %s WHERE product_id = %s"
-    params = (product.name, product.description, product.price, product.stock, product_id)
+    sql = "UPDATE products SET name = %s, description = %s, price = %s, stock = %s, image_url = %s WHERE product_id = %s"
+    params = (product.name, product.description, product.price, product.stock, product.image_url, product_id)
     return query_update(sql, params)
 
 def delete_product(product_id: int) -> bool:
