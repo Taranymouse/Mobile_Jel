@@ -6,12 +6,15 @@ from typing import List
 # ฟังก์ชันสำหรับดึงข้อมูลสินค้า
 def get_all_products() -> List[ProductModel]:
     products = query_get("SELECT * FROM products", ())
-    # แมป product_id ไปยัง id
-    return [ProductModel(id=product["product_id"], 
-                         name=product["name"], 
-                         description=product["description"], 
-                         price=product["price"], 
-                         stock=product["stock"]) for product in products]
+    # แมป product_id ไปยัง id และเพิ่ม image_url
+    return [ProductModel(
+                id=product["product_id"], 
+                name=product["name"], 
+                description=product["description"], 
+                price=product["price"], 
+                stock=product["stock"], 
+                image_url=product["image_url"]  # เพิ่มการแมป image_url
+            ) for product in products]
 
 def get_product_by_id(product_id: int) -> ProductModel:
     product = query_get("SELECT * FROM products WHERE product_id = %s", (product_id,))
