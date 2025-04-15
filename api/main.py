@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from product import get_all_products, get_product_by_id, create_product, update_product, delete_product, create_order
 from product.models import ProductModel, OrderModel
 from typing import List
+from database.query import query_get  # เพิ่มการนำเข้า query_get
 
 app = FastAPI()
 
@@ -71,5 +72,39 @@ async def create_new_order(order: OrderModel):
     try:
         order_id = create_order(order)
         return {"message": "Order created successfully", "order_id": order_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/products/category/{category}", response_model=List[ProductModel])
+async def read_products_by_category(category: str):
+    try:
+        products = query_get("SELECT * FROM products WHERE category = %s", (category,))
+        return [ProductModel(
+            id=product["product_id"],
+            name=product["name"],
+            description=product["description"],
+            price=product["price"],
+            promotion_price=product["promotion_price"],
+            stock=product["stock"],
+            category=product["category"],
+            image_url=product["image_url"]
+        ) for product in products]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/products/promotions", response_model=List[ProductModel])
+async def read_promotion_products():
+    try:
+        products = query_get("SELECT * FROM products WHERE promotion_price IS NOT NULL", ())
+        return [ProductModel(
+            id=product["product_id"],
+            name=product["name"],
+            description=product["description"],
+            price=product["price"],
+            promotion_price=product["promotion_price"],
+            stock=product["stock"],
+            category=product["category"],
+            image_url=product["image_url"]
+        ) for product in products]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

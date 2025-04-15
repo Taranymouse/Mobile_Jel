@@ -6,8 +6,10 @@ class ProductModel(BaseModel):
     name: str
     description: Optional[str] = None
     price: float
+    promotion_price: Optional[float] = None  # เพิ่มฟิลด์ promotion_price
     stock: int
-    image_url: Optional[str] = None  # เพิ่มฟิลด์ image_url
+    category: Optional[str] = None  # เพิ่มฟิลด์ category
+    image_url: Optional[str] = None
 
 class OrderItemModel(BaseModel):
     product_id: int

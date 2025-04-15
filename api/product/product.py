@@ -6,15 +6,16 @@ from typing import List
 # ฟังก์ชันสำหรับดึงข้อมูลสินค้า
 def get_all_products() -> List[ProductModel]:
     products = query_get("SELECT * FROM products", ())
-    # แมป product_id ไปยัง id และเพิ่ม image_url
     return [ProductModel(
-                id=product["product_id"], 
-                name=product["name"], 
-                description=product["description"], 
-                price=product["price"], 
-                stock=product["stock"], 
-                image_url=product["image_url"]  # เพิ่มการแมป image_url
-            ) for product in products]
+        id=product["product_id"],
+        name=product["name"],
+        description=product["description"],
+        price=product["price"],
+        promotion_price=product["promotion_price"],  # เพิ่ม promotion_price
+        stock=product["stock"],
+        category=product["category"],  # เพิ่ม category
+        image_url=product["image_url"]
+    ) for product in products]
 
 def get_product_by_id(product_id: int) -> ProductModel:
     product = query_get("SELECT * FROM products WHERE product_id = %s", (product_id,))
@@ -28,13 +29,41 @@ def get_product_by_id(product_id: int) -> ProductModel:
                         stock=product[0]["stock"])
 
 def create_product(product: ProductModel) -> int:
-    sql = "INSERT INTO products (name, description, price, stock, image_url) VALUES (%s, %s, %s, %s, %s)"
-    params = (product.name, product.description, product.price, product.stock, product.image_url)
+    sql = """
+        INSERT INTO products (name, description, price, promotion_price, stock, category, image_url)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+    params = (
+        product.name,
+        product.description,
+        product.price,
+        product.promotion_price,
+        product.stock,
+        product.category,
+        product.image_url
+    )
     return query_create(sql, params)
 
 def update_product(product_id: int, product: ProductModel) -> bool:
-    sql = "UPDATE products SET name = %s, description = %s, price = %s, stock = %s, image_url = %s WHERE product_id = %s"
-    params = (product.name, product.description, product.price, product.stock, product.image_url, product_id)
+    # ตรวจสอบว่า promotion_price ถูกตั้งค่าหรือไม่
+    category = "Promotion" if product.promotion_price is not None else product.category
+
+    sql = """
+        UPDATE products 
+        SET name = %s, description = %s, price = %s, promotion_price = %s, 
+            stock = %s, category = %s, image_url = %s 
+        WHERE product_id = %s
+    """
+    params = (
+        product.name,
+        product.description,
+        product.price,
+        product.promotion_price,
+        product.stock,
+        category,  # อัปเดต category
+        product.image_url,
+        product_id
+    )
     return query_update(sql, params)
 
 def delete_product(product_id: int) -> bool:
